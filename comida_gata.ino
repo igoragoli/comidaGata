@@ -16,7 +16,7 @@
 #define OPEN_L 180
 #define CLOSED_R 90
 #define OPEN_R 0
-#define TIME 180
+#define TIME 180000
 
 // Variables
 bool state = 0;
