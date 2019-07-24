@@ -13,7 +13,7 @@
 
 // Constants
 #define CLOSED_L 90
-#define OPEN_L 0
+#define OPEN_L 180
 #define CLOSED_R 90
 #define OPEN_R 0
 #define TIME 180
