@@ -1,3 +1,4 @@
+#include <timer.h>
 #include <MFRC522.h>
 #include <SPI.h>
 #include <Servo.h>
@@ -12,7 +13,7 @@
 
 // Constants
 #define CLOSED_L 90
-#define OPEN_L 0
+#define OPEN_L 180
 #define CLOSED_R 90
 #define OPEN_R 0
 #define TIME 180
@@ -31,7 +32,7 @@ void timeout(void){
   outoftime = 1;
 }
 
-void Setup(){
+void setup(){
   SPI.begin();
   mfrc522.PCD_Init();
   servo_l.attach(SRVL_PIN);
@@ -40,30 +41,31 @@ void Setup(){
 }
 
 void loop(){
-  switch (state) {
-    case 0: // Bowl is closed
-      if (mfrc522.PICC_IsNewCardPresent() ||
-          mfrc522.PICC_ReadCardSerial()){
+  if (state == 0) {
+    // Bowl is closed
+      if (mfrc522.PICC_IsNewCardPresent() || mfrc522.PICC_ReadCardSerial()){
         // Open the bowl
         servo_l.write(OPEN_L);
         servo_r.write(OPEN_R);
         delay(1000);
         state = 1;
       }
-    case 1: // Bowl is open
+  }
+  else if (state == 1) {
+    // Bowl is open
       timer.setTimeout(TIME);
       timer.start();
       do {
-        if (mfrc522.PICC_IsNewCardPresent() ||
-          mfrc522.PICC_ReadCardSerial()){
+        if (mfrc522.PICC_IsNewCardPresent() || mfrc522.PICC_ReadCardSerial()){
           timer.start();
         }
         timer.update();
       } while(!outoftime);
-      // Close the bowl
+      
+    // Close the bowl
       servo_l.write(CLOSED_L);
       servo_r.write(CLOSED_R);
       delay(1000);
       state = 0;
-  }
+    }
 }
