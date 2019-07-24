@@ -9,19 +9,18 @@
 
 // Servo pins
 #define SRVL_PIN 4
-#define SRVR_PIN 5
+#define SRVR_PIN 2
 
 // Constants
 #define CLOSED_L 90
 #define OPEN_L 180
 #define CLOSED_R 90
 #define OPEN_R 0
-#define TIME 180
+#define TIME 10000
 
 // Variables
 bool state = 0;
 bool outoftime = 0;
-
 Timer timer;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 Servo servo_l, servo_r;
@@ -53,19 +52,19 @@ void loop(){
   }
   else if (state == 1) {
     // Bowl is open
-      timer.setTimeout(TIME);
-      timer.start();
-      do {
-        if (mfrc522.PICC_IsNewCardPresent() || mfrc522.PICC_ReadCardSerial()){
-          timer.start();
-        }
-        timer.update();
-      } while(!outoftime);
-      
+    outoftime = 0;
+    timer.setTimeout(TIME);
+    timer.start();
+    do {
+      if (mfrc522.PICC_IsNewCardPresent() || mfrc522.PICC_ReadCardSerial()){
+        timer.start();
+      }
+      timer.update();
+    } while(!outoftime);
     // Close the bowl
-      servo_l.write(CLOSED_L);
-      servo_r.write(CLOSED_R);
-      delay(1000);
-      state = 0;
+    servo_l.write(CLOSED_L);
+    servo_r.write(CLOSED_R);
+    delay(1000);
+    state = 0;
     }
 }
